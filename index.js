@@ -6,7 +6,9 @@ const LaunchRequestHandler = {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-    const speechText = 'Welcome to Trending on GitHub, do you want to know what\'s currently trending? Just say, what\'s trending?'
+    const speechText = "Welcome to Trending on GitHub. \
+    You can find out what's trending in your favorite language by saying, what's trending in Swift. \
+    To find out what's trending in all languages just say, what's trending?"
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -22,11 +24,26 @@ const TrendingProjectIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'TrendingProjectIntent';
   },
   handle(handlerInput) {
-    const speechText = 'Today\'s trending project is a Swift project called FloatingPanel!';
+    const speechText = "Today's trending project is a JavaScript project called FloatingPanel!";
 
     return handlerInput.responseBuilder
       .speak(speechText)
-      .withSimpleCard('Trending Today', speechText)
+      .withSimpleCard('Trending today', speechText)
+      .getResponse();
+  }
+};
+
+const TrendingProjectForLanguageIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'TrendingProjectForLanguageIntent';
+  },
+  handle(handlerInput) {
+    const speechText = "Today's trending project in Swift is called FloatingPanel!";
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .withSimpleCard('Trending today in Swift', speechText)
       .getResponse();
   }
 };
@@ -37,7 +54,7 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    const speechText = 'You can say what\'s trending!';
+    const speechText = "You can say what's trending? Or what's trending in Swift?";
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -54,7 +71,7 @@ const CancelAndStopIntentHandler = {
         || handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
   },
   handle(handlerInput) {
-    const speechText = 'Goodbye! Come back tommorrow to see what\'s trending.';
+    const speechText = "Goodbye! Come back tommorrow to see what's trending.";
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -81,8 +98,8 @@ const ErrorHandler = {
     console.log(`Error handled: ${error.message}`);
 
     return handlerInput.responseBuilder
-      .speak('Sorry, I can\'t understand the command. Please say again.')
-      .reprompt('Sorry, I can\'t understand the command. Please say again.')
+      .speak("Sorry, I can't understand the command. Please say again.")
+      .reprompt("Sorry, I can't understand the command. Please say again.")
       .getResponse();
   },
 };
@@ -94,6 +111,7 @@ exports.handler = async (event, context) => {
       .addRequestHandlers(
         LaunchRequestHandler,
         TrendingProjectIntentHandler,
+        TrendingProjectForLanguageIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
