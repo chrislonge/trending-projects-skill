@@ -11,7 +11,7 @@ const LaunchRequestHandler = {
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(speechText)
-      .withSimpleCard('Hello World', speechText)
+      .withSimpleCard('Welcome to Trending on GitHub.', speechText)
       .getResponse();
   }
 };
@@ -22,11 +22,11 @@ const TrendingProjectIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'TrendingProjectIntent';
   },
   handle(handlerInput) {
-    const speechText = 'Today\'s trending project is FloatingPanel!';
+    const speechText = 'Today\'s trending project is a Swift project called FloatingPanel!';
 
     return handlerInput.responseBuilder
       .speak(speechText)
-      .withSimpleCard('Hello World', speechText)
+      .withSimpleCard('Trending Today', speechText)
       .getResponse();
   }
 };
@@ -42,7 +42,7 @@ const HelpIntentHandler = {
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(speechText)
-      .withSimpleCard('Hello World', speechText)
+      .withSimpleCard('Trending on GitHub help', speechText)
       .getResponse();
   }
 };
@@ -54,11 +54,11 @@ const CancelAndStopIntentHandler = {
         || handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
   },
   handle(handlerInput) {
-    const speechText = 'Goodbye!';
+    const speechText = 'Goodbye! Come back tommorrow to see what\'s trending.';
 
     return handlerInput.responseBuilder
       .speak(speechText)
-      .withSimpleCard('Hello World', speechText)
+      .withSimpleCard('Goodbye!', speechText)
       .getResponse();
   }
 };
