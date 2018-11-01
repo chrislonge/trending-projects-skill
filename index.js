@@ -9,7 +9,7 @@ const LaunchRequestHandler = {
   },
   handle(handlerInput) {
     const speechText = "Welcome to Trending on GitHub. \
-    You can find out what's trending in your favorite language by saying, what's trending in Swift. \
+    You can find out what's trending in your favorite language. For example, say What's trending in Swift. \
     To find out what's trending in all languages just say, what's trending?"
 
     return handlerInput.responseBuilder
@@ -29,7 +29,9 @@ const TrendingProjectIntentHandler = {
     return new Promise((resolve, reject) => {
       getTrendingProject((project) => {
         let projectName = project.name;
-        const speechText = `Today's trending project on GitHub is called ${projectName}.`;
+        let description = project.description;
+        const speechText = `Today's trending project on GitHub is called ${projectName}. \
+          Here's a short description. ${description}`;
         resolve(handlerInput.responseBuilder
           .speak(speechText)
           .withSimpleCard('Trending today', speechText)
@@ -53,7 +55,9 @@ const TrendingProjectForLanguageIntentHandler = {
     return new Promise((resolve, reject) => {
       getTrendingProjectForLanguage(language, (project) => {
         let projectName = project.name;
-        const speechText = `Today's trending project in ${language} is called ${projectName}.`;
+        let description = project.description;
+        const speechText = `Today's trending project in ${language} is called ${projectName}. \
+          Here's a short description. ${description}`;
         resolve(handlerInput.responseBuilder
           .speak(speechText)
           .withSimpleCard('Trending today', speechText)
