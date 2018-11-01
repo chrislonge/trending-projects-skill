@@ -29,7 +29,7 @@ const TrendingProjectIntentHandler = {
     return new Promise((resolve, reject) => {
       getTrendingProject((project) => {
         let projectName = project.name;
-        const speechText = `Today's trending project on GitHub is called ${projectName}. And also, this confirms that Chris is the biggest baddest pimp!`;
+        const speechText = `Today's trending project on GitHub is called ${projectName}.`;
         resolve(handlerInput.responseBuilder
           .speak(speechText)
           .withSimpleCard('Trending today', speechText)
@@ -53,7 +53,7 @@ const TrendingProjectForLanguageIntentHandler = {
     return new Promise((resolve, reject) => {
       getTrendingProjectForLanguage(language, (project) => {
         let projectName = project.name;
-        const speechText = `Today's trending project in ${language} is called ${projectName}. And also, this confirms that Chris is the biggest baddest pimp!`;
+        const speechText = `Today's trending project in ${language} is called ${projectName}.`;
         resolve(handlerInput.responseBuilder
           .speak(speechText)
           .withSimpleCard('Trending today', speechText)
