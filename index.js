@@ -1,4 +1,6 @@
 const Alexa = require('ask-sdk-core');
+const request = require('request');
+
 let skill;
 
 const LaunchRequestHandler = {
@@ -24,14 +26,21 @@ const TrendingProjectIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'TrendingProjectIntent';
   },
   handle(handlerInput) {
-    const speechText = "Today's trending project is a JavaScript project called FloatingPanel!";
-
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .withSimpleCard('Trending today', speechText)
-      .getResponse();
-  }
-};
+    return new Promise((resolve, reject) => {
+      getTrendingProject((project) => {
+        let projectName = project.name;
+        const speechText = `Today's trending project on GitHub is called ${projectName}. And also, this confirms that Chris is the biggest baddest pimp!`;
+        resolve(handlerInput.responseBuilder
+          .speak(speechText)
+          .withSimpleCard('Trending today', speechText)
+          .getResponse());
+      }, (err, response) => {
+        console.log(err);
+        reject(err);
+      });
+    });
+  },
+}
 
 const TrendingProjectForLanguageIntentHandler = {
   canHandle(handlerInput) {
@@ -39,13 +48,22 @@ const TrendingProjectForLanguageIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'TrendingProjectForLanguageIntent';
   },
   handle(handlerInput) {
-    const speechText = "Today's trending project in Swift is called FloatingPanel!";
-
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .withSimpleCard('Trending today in Swift', speechText)
-      .getResponse();
-  }
+    const request = handlerInput.requestEnvelope.request;
+    const language = request.intent.slots.language.value
+    return new Promise((resolve, reject) => {
+      getTrendingProjectForLanguage(language, (project) => {
+        let projectName = project.name;
+        const speechText = `Today's trending project in ${language} is called ${projectName}. And also, this confirms that Chris is the biggest baddest pimp!`;
+        resolve(handlerInput.responseBuilder
+          .speak(speechText)
+          .withSimpleCard('Trending today', speechText)
+          .getResponse());
+      }, (err, response) => {
+        console.log(err);
+        reject(err);
+      });
+    });
+  },
 };
 
 const HelpIntentHandler = {
@@ -125,3 +143,43 @@ exports.handler = async (event, context) => {
 
   return response;
 };
+
+// Networking Functions ==========================================================================
+
+const options = {
+  uri: 'https://github-trending-api.now.sh/repositories',
+  method: 'GET',
+  json: true // Automatically parses the JSON string in the response
+};
+
+function getTrendingProject(onSuccess, onFailure) {
+  request(options, function (error, response, body) {
+    if (error) {
+      console.log(`Error making request: ${error}`);
+      onFailure(error, response)
+    }
+    
+    console.log('github-trending-api response status:', response.statusCode);
+    console.log('github-trending-api response data:', body);
+    let trendingProject = body[0];
+    onSuccess(trendingProject);
+  });
+}
+
+function getTrendingProjectForLanguage(language, onSuccess, onFailure) {
+  request({
+    method: 'GET',
+    uri: 'https://github-trending-api.now.sh/repositories?language=' + language,
+    json: true
+  }, function (error, response, body) {
+    if (error) {
+      console.log(`Error making request: ${error}`);
+      onFailure(error, response)
+    }
+
+    console.log('github-trending-api response status:', response.statusCode);
+    console.log('github-trending-api response data:', body);
+    let trendingProject = body[0];
+    onSuccess(trendingProject);
+  });
+}
