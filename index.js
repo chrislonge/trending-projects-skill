@@ -8,14 +8,10 @@ const LaunchRequestHandler = {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-    const speechText = "Welcome to Trending on GitHub. \
-    You can find out what's trending in your favorite language. For example, say What's trending in Swift. \
-    To find out what's trending in all languages just say, what's trending?"
-
     return handlerInput.responseBuilder
-      .speak(speechText)
-      .reprompt(speechText)
-      .withSimpleCard('Welcome to Trending on GitHub.', speechText)
+      .speak(welcomeMessage)
+      .reprompt(repromptMessage)
+      .withSimpleCard('Welcome to Trending on GitHub.', welcomeMessage)
       .getResponse();
   }
 };
@@ -31,13 +27,16 @@ const TrendingProjectIntentHandler = {
         let projectName = project.name;
         let description = project.description;
         const speechText = `Today's trending project on GitHub is called ${projectName}. \
-          Here's a short description. ${description}`;
+          Here's a short description. ${description}. \
+          To here what's trending in a specific programming language, just say the language.`;
+        const repromptText = `Would you like to hear about a trending project in a specific language?`;
         resolve(handlerInput.responseBuilder
           .speak(speechText)
+          .reprompt(repromptText)
           .withSimpleCard('Trending today', speechText)
           .getResponse());
       }, (err, response) => {
-        console.log(err);
+        console.log(`Error: ${err}\nResponse: ${response}`);
         reject(err);
       });
     });
@@ -76,11 +75,9 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    const speechText = "You can say what's trending? Or what's trending in Swift?";
-
     return handlerInput.responseBuilder
-      .speak(speechText)
-      .reprompt(speechText)
+      .speak(helpMessage)
+      .reprompt(helpMessage)
       .withSimpleCard('Trending on GitHub help', speechText)
       .getResponse();
   }
@@ -148,6 +145,14 @@ exports.handler = async (event, context) => {
   return response;
 };
 
+// Constants =====================================================================================
+
+const welcomeMessage = `Welcome to Trending on GitHub. \
+  You can find out what's trending in your favorite programming language's. For example, say What's trending in Swift. \
+  To find out what's trending in all languages just say, what's trending?`;
+const repromptMessage = `Which other programming language would you like to hear about?`;
+const helpMessage = `You can say what's trending? Or what's trending in Swift?`;
+
 // Networking Functions ==========================================================================
 
 const options = {
@@ -160,11 +165,16 @@ function getTrendingProject(onSuccess, onFailure) {
   request(options, function (error, response, body) {
     if (error) {
       console.log(`Error making request: ${error}`);
-      onFailure(error, response)
+      onFailure(error, response);
     }
     
     console.log('github-trending-api response status:', response.statusCode);
     console.log('github-trending-api response data:', body);
+    // Array does not exist or is not an array, or is empty.
+    if (!Array.isArray(body) || !body.length) {
+      console.log('Recieved incorrect object, or an empty array...');
+      onFailure(null, response);
+    }
     let trendingProject = body[0];
     onSuccess(trendingProject);
   });
