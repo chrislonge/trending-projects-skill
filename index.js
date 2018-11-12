@@ -26,13 +26,13 @@ const TrendingProjectIntentHandler = {
       getTrendingProject((project) => {
         let projectName = project.name;
         let description = project.description;
-        const speechText = `Today's trending project on GitHub is called ${projectName}. \
-          Here's a short description. ${description}. \
+        let language = project.language;
+        const speechText = `Today's trending project is a ${language} project called ${projectName}. \
+          Here's a short description. ${description}. <break time="2s"/> \
           To here what's trending in a specific programming language, just say the language.`;
-        const repromptText = `Would you like to hear about a trending project in a specific language?`;
         resolve(handlerInput.responseBuilder
           .speak(speechText)
-          .reprompt(repromptText)
+          .reprompt(repromptMessage)
           .withSimpleCard('Trending today', speechText)
           .getResponse());
       }, (err, response) => {
@@ -56,9 +56,11 @@ const TrendingProjectForLanguageIntentHandler = {
         let projectName = project.name;
         let description = project.description;
         const speechText = `Today's trending project in ${language} is called ${projectName}. \
-          Here's a short description. ${description}`;
+          Here's a short description. ${description} <break time="2s"/> \
+          To here what's trending in another programming language, just say the language.`;
         resolve(handlerInput.responseBuilder
           .speak(speechText)
+          .reprompt(repromptMessage)
           .withSimpleCard('Trending today', speechText)
           .getResponse());
       }, (err, response) => {
@@ -150,7 +152,7 @@ exports.handler = async (event, context) => {
 const welcomeMessage = `Welcome to Trending on GitHub. \
   You can find out what's trending in your favorite programming language's. For example, say What's trending in Swift. \
   To find out what's trending in all languages just say, what's trending?`;
-const repromptMessage = `Which other programming language would you like to hear about?`;
+const repromptMessage = `Which programming language would you like to hear about?`;
 const helpMessage = `You can say what's trending? Or what's trending in Swift?`;
 
 // Networking Functions ==========================================================================
