@@ -28,7 +28,7 @@ const TrendingProjectIntentHandler = {
         let description = project.description;
         let language = project.language;
         const speechText = `Today's trending project is a ${language} project called ${projectName}. \
-          Here's a short description. ${description}. <break time="2s"/> \
+          Here's a short description. ${description}. <break time="1s"/> \
           To here what's trending in a specific programming language, just say the language.`;
         resolve(handlerInput.responseBuilder
           .speak(speechText)
@@ -56,7 +56,7 @@ const TrendingProjectForLanguageIntentHandler = {
         let projectName = project.name;
         let description = project.description;
         const speechText = `Today's trending project in ${language} is called ${projectName}. \
-          Here's a short description. ${description} <break time="2s"/> \
+          Here's a short description. ${description} <break time="1s"/> \
           To here what's trending in another programming language, just say the language.`;
         resolve(handlerInput.responseBuilder
           .speak(speechText)
