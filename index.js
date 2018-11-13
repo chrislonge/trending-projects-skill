@@ -92,11 +92,9 @@ const CancelAndStopIntentHandler = {
         || handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
   },
   handle(handlerInput) {
-    const speechText = "Goodbye! Come back tommorrow to see what's trending.";
-
     return handlerInput.responseBuilder
-      .speak(speechText)
-      .withSimpleCard('Goodbye!', speechText)
+      .speak(cancelMessage)
+      .withSimpleCard(cancelMessage)
       .getResponse();
   }
 };
@@ -154,6 +152,7 @@ const welcomeMessage = `Welcome to Trending on GitHub. \
   To find out what's trending in all languages just say, what's trending?`;
 const repromptMessage = `Which programming language would you like to hear about?`;
 const helpMessage = `You can say what's trending? Or what's trending in Swift?`;
+const cancelMessage = `Goodbye! Come back tommorrow to find out what's trending.`;
 
 // Networking Functions ==========================================================================
 
